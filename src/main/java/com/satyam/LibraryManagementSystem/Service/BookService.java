@@ -2,6 +2,7 @@ package com.satyam.LibraryManagementSystem.Service;
 
 import com.satyam.LibraryManagementSystem.Dto.ResponseDto;
 import com.satyam.LibraryManagementSystem.Dto.UpdatePage;
+import com.satyam.LibraryManagementSystem.Exception.IdDoesNotExistException;
 import com.satyam.LibraryManagementSystem.Model.Book;
 import com.satyam.LibraryManagementSystem.Repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,9 @@ public class BookService {
     @Autowired
     BookRepository bookRepository;
 
-    public  String updatePage(UpdatePage updatePage) throws Exception {
+    public  String updatePage(UpdatePage updatePage) throws IdDoesNotExistException {
         if(!bookRepository.findById(updatePage.getId()).isPresent()){
-            throw new Exception("Id doesn't exists :(");
+            throw new IdDoesNotExistException("Id doesn't exists :(");
         }
         int id = updatePage.getId();
 //      I have to convert DTO to ENTITY
@@ -28,20 +29,20 @@ public class BookService {
             return "Updated";
     }
 
-    public String addBook(Book book) throws Exception {
+    public String addBook(Book book) throws IdDoesNotExistException {
         if(bookRepository.findById(book.getId()).isPresent()){
             String message = "book with id "+book.getId()+" is already exists :(";
-            throw new Exception(message);
+            throw new IdDoesNotExistException(message);
         }
         bookRepository.save(book);
         return "successfully saved :)";
     }
 
-    public Book getBookById(int id) throws Exception {
+    public Book getBookById(int id) throws IdDoesNotExistException {
         if(bookRepository.findById(id).isPresent()){
             return bookRepository.findById(id).get();
         }
-        throw new Exception("Book doesn't Exists :(");
+        throw new IdDoesNotExistException("Book doesn't Exists :(");
     }
 
     public List<ResponseDto> getMovieList() {
